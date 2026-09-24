@@ -1,0 +1,85 @@
+#1 Tic Tac Toe
+
+import random
+
+def print_board(board):
+    print("\n")
+    print(f" {board[0]} | {board[1]} | {board[2]} ")
+    print("---|---|---")
+    print(f" {board[3]} | {board[4]} | {board[5]} ")
+    print("---|---|---")
+    print(f" {board[6]} | {board[7]} | {board[8]} ")
+    print("\n")
+
+
+def check_win(board, player):
+    win_conditions = [
+        (0, 1, 2), (3, 4, 5), (6, 7, 8),  # Rows
+        (0, 3, 6), (1, 4, 7), (2, 5, 8),  # Columns
+        (0, 4, 8), (2, 4, 6)               # Diagonals
+    ]
+    for a, b, c in win_conditions:
+        if board[a] == board[b] == board[c] == player:
+            return True
+    return False
+
+
+def get_computer_move(board):
+    available_moves = [i for i, spot in enumerate(board) if spot not in ["X", "O"]]
+    if available_moves:
+        return random.choice(available_moves)
+    return None
+
+
+def play_game():
+    board = [str(i + 1) for i in range(9)]
+    current_player = "X"
+    human_player = "X"
+    computer_player = "O"
+
+    print("--- Tic-Tac-Toe ---")
+    print("Player X (you) vs. Player O (computer)")
+    print("Select a position (1-9) to place your mark:")
+
+    for turn in range(9):
+        print_board(board)
+
+        if current_player == human_player:
+            # Human player's turn
+            while True:
+                choice = input(f"Player {current_player}, choose a spot (1-9): ")
+                if choice.isdigit() and 1 <= int(choice) <= 9:
+                    move = int(choice) - 1
+                    if board[move] not in ["X", "O"]:
+                        board[move] = current_player
+                        break
+                    else:
+                        print("That spot is already taken! Try again.")
+                else:
+                    print("Invalid input. Please enter a number between 1 and 9.")
+        else:
+            # Computer player's turn
+            print(f"Player {current_player} (Computer) is thinking...")
+            move = get_computer_move(board)
+            if move is not None:
+                board[move] = current_player
+            else:
+                # Should not happen in a 9-turn game if the board is managed correctly
+                print("Error: Computer could not find a move.")
+                break
+
+        # Check for winner
+        if check_win(board, current_player):
+            print_board(board)
+            print(f"Congratulations! Player {current_player} wins!")
+            return
+
+        # Switch players
+        current_player = human_player if current_player == computer_player else computer_player
+
+    print_board(board)
+    print("It's a tie!")
+
+
+if __name__ == "__main__":
+    play_game()
