@@ -1,0 +1,75 @@
+#4 Hill_Climb_NQueens
+
+N = 4
+ 
+
+def calculate_cost(board):
+    conflicts = 0
+
+    for i in range(N):
+        for j in range(i + 1, N):
+            if abs(board[i] - board[j]) == abs(i - j):
+                conflicts += 1
+
+    return conflicts
+
+
+def print_board(board):
+    for row in range(N):
+        for col in range(N):
+            if board[col] == row:
+                print("Q", end=" ")
+            else:
+                print(".", end=" ")
+        print()
+
+
+def hill_climbing(board):
+    current = board.copy()
+    step = 0
+
+    while True:
+        current_cost = calculate_cost(current)
+
+        print("\nStep:", step)
+        print("Current State:", current)
+        print("Current Cost:", current_cost)
+        print_board(current)
+
+        if current_cost == 0:
+            print("\nGoal State Reached!")
+            return current
+
+        best_state = current.copy()
+        best_cost = current_cost
+
+        for i in range(N):
+            for j in range(i + 1, N):
+                neighbor = current.copy()
+                neighbor[i], neighbor[j] = (
+                    neighbor[j], neighbor[i]
+                )
+
+                cost = calculate_cost(neighbor)
+                print("Neighbor:", neighbor, "Cost:", cost)
+
+                if cost < best_cost:
+                    best_state = neighbor
+                    best_cost = cost
+
+        if best_cost >= current_cost:
+            print("Local minimum reached.")
+            return None
+
+        current = best_state
+        step += 1
+
+initial_board = [2, 1, 0, 3]
+
+solution = hill_climbing(initial_board)
+
+if solution:
+    print("\nFinal Solution:", solution)
+    print("Final Cost:", calculate_cost(solution))
+    print("\nFinal Board:")
+    print_board(solution)
