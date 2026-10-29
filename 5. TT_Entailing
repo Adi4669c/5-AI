@@ -1,0 +1,39 @@
+from itertools import product
+
+# Knowledge Base: P → Q
+# Query: Q
+
+def entails(kb, query):
+    symbols = ['P', 'Q']
+    
+    # Print Header for Table
+    print(f"| {'P':^5} | {'Q':^5} | {'KB (P -> Q)':^13} | {'Query (Q)':^10} | Result |")
+    print("|" + "-"*7 + "|" + "-"*7 + "|" + "-"*15 + "|" + "-"*12 + "|" + "-"*10 + "|")
+    
+    is_entailed = True
+    for P, Q in product([True, False], repeat=2):
+        model = {'P': P, 'Q': Q}
+        
+        # KB: P -> Q
+        KB = (not P) or Q
+        
+        # Query
+        result = query(model)
+        
+        # Check if KB is true but Query is false
+        status = "TRUE" if not (KB and not result) else "FALSE"
+        if KB and not result:
+            is_entailed = False
+            
+        print(f"| {str(P):^5} | {str(Q):^5} | {str(KB):^13} | {str(result):^10} | {status:^8} |")
+        
+    print("|" + "-"*7 + "|" + "-"*7 + "|" + "-"*15 + "|" + "-"*12 + "|" + "-"*10 + "|")
+    return is_entailed
+
+query = lambda m: m['Q']
+
+print("Checking Entailment Truth Table:\n")
+if entails(None, query):
+    print("\nRESULT: KB entails Query (KB ⊨ Q)")
+else:
+    print("\nRESULT: KB does NOT entail Query (KB ⊭ Q)")
