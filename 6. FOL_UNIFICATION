@@ -1,0 +1,51 @@
+def unify(x, y, subs=None):
+    if subs is None:
+        subs = {}
+
+    if x == y:
+        return subs
+
+    if isinstance(x, str) and x.islower() and len(x) == 1:
+        if x in subs:
+            return unify(subs[x], y, subs)
+        if occurs(x, y, subs):
+            return None
+        subs[x] = y
+        return subs
+
+    if isinstance(y, str) and y.islower() and len(y) == 1:
+        return unify(y, x, subs)
+
+    if isinstance(x, tuple) and isinstance(y, tuple):
+        if x[0] != y[0] or len(x) != len(y):
+            return None
+
+        for a, b in zip(x[1:], y[1:]):
+            subs = unify(a, b, subs)
+            if subs is None:
+                return None
+        return subs
+
+    return None
+
+
+def occurs(var, expr, subs):
+    if var == expr:
+        return True
+    if isinstance(expr, str) and expr in subs:
+        return occurs(var, subs[expr], subs)
+    if isinstance(expr, tuple):
+        return any(occurs(var, item, subs) for item in expr[1:])
+    return False
+
+
+# Example
+x = ("P", "x", "apple")
+y = ("P", "Riya", "x")
+
+result = unify(x, y)
+
+if result is not None:
+    print("Unifier:", result)
+else:
+    print("Unification failed")
